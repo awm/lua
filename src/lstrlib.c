@@ -893,7 +893,11 @@ static int lua_number2strx (lua_State *L, char *buff, int sz,
 ** is maximum exponent + 1). (99+3+1 then rounded to 120 for "extra
 ** expenses", such as locale-dependent stuff)
 */
+#if defined(LUA_DISABLE_FLOAT)
+#define MAX_ITEM        (128)
+#else /* not LUA_DISABLE_FLOAT */
 #define MAX_ITEM        (120 + l_mathlim(MAX_10_EXP))
+#endif /* end not LUA_DISABLE_FLOAT */
 
 
 /* valid flags in a format specification */
@@ -927,7 +931,7 @@ static void addquoted (luaL_Buffer *b, const char *s, size_t len) {
   luaL_addchar(b, '"');
 }
 
-
+#if !defined(LUA_DISABLE_FLOAT)
 /*
 ** Ensures the 'buff' string uses a dot as the radix character.
 */
@@ -938,7 +942,7 @@ static void checkdp (char *buff, int nb) {
     if (ppoint) *ppoint = '.';  /* change it to a dot */
   }
 }
-
+#endif /* end not LUA_DISABLE_FLOAT */
 
 static void addliteral (lua_State *L, luaL_Buffer *b, int arg) {
   switch (lua_type(L, arg)) {
@@ -951,12 +955,15 @@ static void addliteral (lua_State *L, luaL_Buffer *b, int arg) {
     case LUA_TNUMBER: {
       char *buff = luaL_prepbuffsize(b, MAX_ITEM);
       int nb;
+#if !defined(LUA_DISABLE_FLOAT)
       if (!lua_isinteger(L, arg)) {  /* float? */
         lua_Number n = lua_tonumber(L, arg);  /* write as hexa ('%a') */
         nb = lua_number2strx(L, buff, MAX_ITEM, "%" LUA_NUMBER_FRMLEN "a", n);
         checkdp(buff, nb);  /* ensure it uses a dot */
       }
-      else {  /* integers */
+      else
+#endif /* end not LUA_DISABLE_FLOAT */
+      {  /* integers */
         lua_Integer n = lua_tointeger(L, arg);
         const char *format = (n == LUA_MININTEGER)  /* corner case? */
                            ? "0x%" LUA_INTEGER_FRMLEN "x"  /* use hexa */
@@ -1045,6 +1052,7 @@ static int str_format (lua_State *L) {
           nb = l_sprintf(buff, MAX_ITEM, form, (LUAI_UACINT)n);
           break;
         }
+#if !defined(LUA_DISABLE_FLOAT)
         case 'a': case 'A':
           addlenmod(form, LUA_NUMBER_FRMLEN);
           nb = lua_number2strx(L, buff, MAX_ITEM, form,
@@ -1057,6 +1065,7 @@ static int str_format (lua_State *L) {
           nb = l_sprintf(buff, MAX_ITEM, form, (LUAI_UACNUMBER)n);
           break;
         }
+#endif /* end not LUA_DISABLE_FLOAT */
         case 'q': {
           addliteral(L, &b, arg);
           break;

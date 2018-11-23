@@ -29,7 +29,9 @@ typedef enum {
   VTRUE,  /* constant true */
   VFALSE,  /* constant false */
   VK,  /* constant in 'k'; info = index of constant in 'k' */
+#if !defined(LUA_DISABLE_FLOAT)
   VKFLT,  /* floating constant; nval = numerical float value */
+#endif
   VKINT,  /* integer constant; nval = numerical integer value */
   VNONRELOC,  /* expression has its value in a fixed register;
                  info = result register */
@@ -55,7 +57,9 @@ typedef struct expdesc {
   expkind k;
   union {
     lua_Integer ival;    /* for VKINT */
+#if !defined(LUA_DISABLE_FLOAT)
     lua_Number nval;  /* for VKFLT */
+#endif
     int info;  /* for generic use */
     struct {  /* for indexed variables (VINDEXED) */
       short idx;  /* index (R/K) */

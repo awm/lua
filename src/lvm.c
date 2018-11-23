@@ -11,7 +11,9 @@
 
 #include <float.h>
 #include <limits.h>
-#include <math.h>
+#if !defined(LUA_DISABLE_FLOAT)
+# include <math.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -63,7 +65,9 @@
 
 #endif
 
-
+#if defined(LUA_DISABLE_FLOAT)
+# undef l_intfitsf
+#endif
 
 /*
 ** Try to convert a value to a float. The float case is already handled
@@ -94,6 +98,9 @@ int luaV_tonumber_ (const TValue *obj, lua_Number *n) {
 int luaV_tointeger (const TValue *obj, lua_Integer *p, int mode) {
   TValue v;
  again:
+#if defined(LUA_DISABLE_FLOAT)
+  UNUSED(mode);
+#else /* not LUA_DISABLE_FLOAT */
   if (ttisfloat(obj)) {
     lua_Number n = fltvalue(obj);
     lua_Number f = l_floor(n);
@@ -104,7 +111,9 @@ int luaV_tointeger (const TValue *obj, lua_Integer *p, int mode) {
     }
     return lua_numbertointeger(f, p);
   }
-  else if (ttisinteger(obj)) {
+  else
+#endif /* end not LUA_DISABLE_FLOAT */
+  if (ttisinteger(obj)) {
     *p = ivalue(obj);
     return 1;
   }
@@ -418,7 +427,9 @@ int luaV_equalobj (lua_State *L, const TValue *t1, const TValue *t2) {
   switch (ttype(t1)) {
     case LUA_TNIL: return 1;
     case LUA_TNUMINT: return (ivalue(t1) == ivalue(t2));
+#if !defined(LUA_DISABLE_FLOAT)
     case LUA_TNUMFLT: return luai_numeq(fltvalue(t1), fltvalue(t2));
+#endif
     case LUA_TBOOLEAN: return bvalue(t1) == bvalue(t2);  /* true must be 1 !! */
     case LUA_TLIGHTUSERDATA: return pvalue(t1) == pvalue(t2);
     case LUA_TLCF: return fvalue(t1) == fvalue(t2);
@@ -889,45 +900,58 @@ void luaV_execute (lua_State *L) {
       vmcase(OP_ADD) {
         TValue *rb = RKB(i);
         TValue *rc = RKC(i);
+#if !defined(LUA_DISABLE_FLOAT)
         lua_Number nb; lua_Number nc;
+#endif
         if (ttisinteger(rb) && ttisinteger(rc)) {
           lua_Integer ib = ivalue(rb); lua_Integer ic = ivalue(rc);
           setivalue(ra, intop(+, ib, ic));
         }
+#if !defined(LUA_DISABLE_FLOAT)
         else if (tonumber(rb, &nb) && tonumber(rc, &nc)) {
           setfltvalue(ra, luai_numadd(L, nb, nc));
         }
+#endif /* end not LUA_DISABLE_FLOAT */
         else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_ADD)); }
         vmbreak;
       }
       vmcase(OP_SUB) {
         TValue *rb = RKB(i);
         TValue *rc = RKC(i);
+#if !defined(LUA_DISABLE_FLOAT)
         lua_Number nb; lua_Number nc;
+#endif
         if (ttisinteger(rb) && ttisinteger(rc)) {
           lua_Integer ib = ivalue(rb); lua_Integer ic = ivalue(rc);
           setivalue(ra, intop(-, ib, ic));
         }
+#if !defined(LUA_DISABLE_FLOAT)
         else if (tonumber(rb, &nb) && tonumber(rc, &nc)) {
           setfltvalue(ra, luai_numsub(L, nb, nc));
         }
+#endif /* end not LUA_DISABLE_FLOAT */
         else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_SUB)); }
         vmbreak;
       }
       vmcase(OP_MUL) {
         TValue *rb = RKB(i);
         TValue *rc = RKC(i);
+#if !defined(LUA_DISABLE_FLOAT)
         lua_Number nb; lua_Number nc;
+#endif /* end not LUA_DISABLE_FLOAT */
         if (ttisinteger(rb) && ttisinteger(rc)) {
           lua_Integer ib = ivalue(rb); lua_Integer ic = ivalue(rc);
           setivalue(ra, intop(*, ib, ic));
         }
+#if !defined(LUA_DISABLE_FLOAT)
         else if (tonumber(rb, &nb) && tonumber(rc, &nc)) {
           setfltvalue(ra, luai_nummul(L, nb, nc));
         }
+#endif /* end not LUA_DISABLE_FLOAT */
         else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_MUL)); }
         vmbreak;
       }
+#if !defined(LUA_DISABLE_FLOAT)
       vmcase(OP_DIV) {  /* float division (always with floats) */
         TValue *rb = RKB(i);
         TValue *rc = RKC(i);
@@ -938,6 +962,7 @@ void luaV_execute (lua_State *L) {
         else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_DIV)); }
         vmbreak;
       }
+#endif /* end not LUA_DISABLE_FLOAT */
       vmcase(OP_BAND) {
         TValue *rb = RKB(i);
         TValue *rc = RKC(i);
@@ -991,53 +1016,73 @@ void luaV_execute (lua_State *L) {
       vmcase(OP_MOD) {
         TValue *rb = RKB(i);
         TValue *rc = RKC(i);
+#if !defined(LUA_DISABLE_FLOAT)
         lua_Number nb; lua_Number nc;
+#endif
         if (ttisinteger(rb) && ttisinteger(rc)) {
           lua_Integer ib = ivalue(rb); lua_Integer ic = ivalue(rc);
           setivalue(ra, luaV_mod(L, ib, ic));
         }
+#if !defined(LUA_DISABLE_FLOAT)
         else if (tonumber(rb, &nb) && tonumber(rc, &nc)) {
           lua_Number m;
           luai_nummod(L, nb, nc, m);
           setfltvalue(ra, m);
         }
+#endif /* end not LUA_DISABLE_FLOAT */
         else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_MOD)); }
         vmbreak;
       }
+#if defined(LUA_DISABLE_FLOAT)
+      vmcase(OP_DIV)
+#endif
       vmcase(OP_IDIV) {  /* floor division */
         TValue *rb = RKB(i);
         TValue *rc = RKC(i);
+#if !defined(LUA_DISABLE_FLOAT)
         lua_Number nb; lua_Number nc;
+#endif
         if (ttisinteger(rb) && ttisinteger(rc)) {
           lua_Integer ib = ivalue(rb); lua_Integer ic = ivalue(rc);
           setivalue(ra, luaV_div(L, ib, ic));
         }
+#if !defined(LUA_DISABLE_FLOAT)
         else if (tonumber(rb, &nb) && tonumber(rc, &nc)) {
           setfltvalue(ra, luai_numidiv(L, nb, nc));
         }
+#endif /* end not LUA_DISABLE_FLOAT */
         else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_IDIV)); }
         vmbreak;
       }
       vmcase(OP_POW) {
         TValue *rb = RKB(i);
         TValue *rc = RKC(i);
+#if !defined(LUA_DISABLE_FLOAT)
         lua_Number nb; lua_Number nc;
         if (tonumber(rb, &nb) && tonumber(rc, &nc)) {
           setfltvalue(ra, luai_numpow(L, nb, nc));
         }
-        else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_POW)); }
+        else
+#endif /* end not LUA_DISABLE_FLOAT */
+        {
+          Protect(luaT_trybinTM(L, rb, rc, ra, TM_POW));
+        }
         vmbreak;
       }
       vmcase(OP_UNM) {
         TValue *rb = RB(i);
+#if !defined(LUA_DISABLE_FLOAT)
         lua_Number nb;
+#endif
         if (ttisinteger(rb)) {
           lua_Integer ib = ivalue(rb);
           setivalue(ra, intop(-, 0, ib));
         }
+#if !defined(LUA_DISABLE_FLOAT)
         else if (tonumber(rb, &nb)) {
           setfltvalue(ra, luai_numunm(L, nb));
         }
+#endif /* end not LUA_DISABLE_FLOAT */
         else {
           Protect(luaT_trybinTM(L, rb, rb, ra, TM_UNM));
         }
@@ -1198,6 +1243,7 @@ void luaV_execute (lua_State *L) {
             setivalue(ra + 3, idx);  /* ...and external index */
           }
         }
+#if !defined(LUA_DISABLE_FLOAT)
         else {  /* floating loop */
           lua_Number step = fltvalue(ra + 2);
           lua_Number idx = luai_numadd(L, fltvalue(ra), step); /* inc. index */
@@ -1209,6 +1255,7 @@ void luaV_execute (lua_State *L) {
             setfltvalue(ra + 3, idx);  /* ...and external index */
           }
         }
+#endif /* end not LUA_DISABLE_FLOAT */
         vmbreak;
       }
       vmcase(OP_FORPREP) {
@@ -1224,6 +1271,7 @@ void luaV_execute (lua_State *L) {
           setivalue(plimit, ilimit);
           setivalue(init, intop(-, initv, ivalue(pstep)));
         }
+#if !defined(LUA_DISABLE_FLOAT)
         else {  /* try making all values floats */
           lua_Number ninit; lua_Number nlimit; lua_Number nstep;
           if (!tonumber(plimit, &nlimit))
@@ -1236,6 +1284,7 @@ void luaV_execute (lua_State *L) {
             luaG_runerror(L, "'for' initial value must be a number");
           setfltvalue(init, luai_numsub(L, ninit, nstep));
         }
+#endif /* end not LUA_DISABLE_FLOAT */
         ci->u.l.savedpc += GETARG_sBx(i);
         vmbreak;
       }

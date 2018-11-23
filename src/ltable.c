@@ -23,7 +23,9 @@
 ** Hence even when the load factor reaches 100%, performance remains good.
 */
 
-#include <math.h>
+#if !defined(LUA_DISABLE_FLOAT)
+# include <math.h>
+#endif
 #include <limits.h>
 
 #include "lua.h"
@@ -118,8 +120,10 @@ static Node *mainposition (const Table *t, const TValue *key) {
   switch (ttype(key)) {
     case LUA_TNUMINT:
       return hashint(t, ivalue(key));
+#if !defined(LUA_DISABLE_FLOAT)
     case LUA_TNUMFLT:
       return hashmod(t, l_hashfloat(fltvalue(key)));
+#endif /* end not LUA_DISABLE_FLOAT */
     case LUA_TSHRSTR:
       return hashstr(t, tsvalue(key));
     case LUA_TLNGSTR:
@@ -591,12 +595,14 @@ const TValue *luaH_get (Table *t, const TValue *key) {
     case LUA_TSHRSTR: return luaH_getshortstr(t, tsvalue(key));
     case LUA_TNUMINT: return luaH_getint(t, ivalue(key));
     case LUA_TNIL: return luaO_nilobject;
+#if !defined(LUA_DISABLE_FLOAT)
     case LUA_TNUMFLT: {
       lua_Integer k;
       if (luaV_tointeger(key, &k, 0)) /* index is int? */
         return luaH_getint(t, k);  /* use specialized version */
       /* else... */
     }  /* FALLTHROUGH */
+#endif /* end not LUA_DISABLE_FLOAT */
     default:
       return getgeneric(t, key);
   }

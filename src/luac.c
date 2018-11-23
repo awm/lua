@@ -262,6 +262,7 @@ static void PrintConstant(const Proto* f, int i)
   case LUA_TBOOLEAN:
 	printf(bvalue(o) ? "true" : "false");
 	break;
+#if !defined(LUA_DISABLE_FLOAT)
   case LUA_TNUMFLT:
 	{
 	char buff[100];
@@ -270,6 +271,7 @@ static void PrintConstant(const Proto* f, int i)
 	if (buff[strspn(buff,"-0123456789")]=='\0') printf(".0");
 	break;
 	}
+#endif /* end not LUA_DISABLE_FLOAT */
   case LUA_TNUMINT:
 	printf(LUA_INTEGER_FMT,ivalue(o));
 	break;

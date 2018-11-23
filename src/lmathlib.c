@@ -11,7 +11,9 @@
 
 
 #include <stdlib.h>
-#include <math.h>
+#if !defined(LUA_DISABLE_FLOAT)
+# include <math.h>
+#endif
 
 #include "lua.h"
 
@@ -42,11 +44,14 @@ static int math_abs (lua_State *L) {
     if (n < 0) n = (lua_Integer)(0u - (lua_Unsigned)n);
     lua_pushinteger(L, n);
   }
+#if !defined(LUA_DISABLE_FLOAT)
   else
     lua_pushnumber(L, l_mathop(fabs)(luaL_checknumber(L, 1)));
+#endif /* end not LUA_DISABLE_FLOAT */
   return 1;
 }
 
+#if !defined(LUA_DISABLE_FLOAT)
 static int math_sin (lua_State *L) {
   lua_pushnumber(L, l_mathop(sin)(luaL_checknumber(L, 1)));
   return 1;
@@ -78,6 +83,7 @@ static int math_atan (lua_State *L) {
   lua_pushnumber(L, l_mathop(atan2)(y, x));
   return 1;
 }
+#endif /* end not LUA_DISABLE_FLOAT */
 
 
 static int math_toint (lua_State *L) {
@@ -93,6 +99,7 @@ static int math_toint (lua_State *L) {
 }
 
 
+#if !defined(LUA_DISABLE_FLOAT)
 static void pushnumint (lua_State *L, lua_Number d) {
   lua_Integer n;
   if (lua_numbertointeger(d, &n))  /* does 'd' fit in an integer? */
@@ -167,6 +174,7 @@ static int math_sqrt (lua_State *L) {
   lua_pushnumber(L, l_mathop(sqrt)(luaL_checknumber(L, 1)));
   return 1;
 }
+#endif /* end not LUA_DISABLE_FLOAT */
 
 
 static int math_ult (lua_State *L) {
@@ -176,6 +184,7 @@ static int math_ult (lua_State *L) {
   return 1;
 }
 
+#if !defined(LUA_DISABLE_FLOAT)
 static int math_log (lua_State *L) {
   lua_Number x = luaL_checknumber(L, 1);
   lua_Number res;
@@ -210,6 +219,7 @@ static int math_rad (lua_State *L) {
   lua_pushnumber(L, luaL_checknumber(L, 1) * (PI / l_mathop(180.0)));
   return 1;
 }
+#endif /* end not LUA_DISABLE_FLOAT */
 
 
 static int math_min (lua_State *L) {
@@ -248,10 +258,12 @@ static int math_random (lua_State *L) {
   lua_Integer low, up;
   double r = (double)l_rand() * (1.0 / ((double)L_RANDMAX + 1.0));
   switch (lua_gettop(L)) {  /* check number of arguments */
+#if !defined(LUA_DISABLE_FLOAT)
     case 0: {  /* no arguments */
       lua_pushnumber(L, (lua_Number)r);  /* Number between 0 and 1 */
       return 1;
     }
+#endif /* end not LUA_DISABLE_FLOAT */
     case 1: {  /* only upper limit */
       low = 1;
       up = luaL_checkinteger(L, 1);
@@ -283,10 +295,14 @@ static int math_randomseed (lua_State *L) {
 
 static int math_type (lua_State *L) {
   if (lua_type(L, 1) == LUA_TNUMBER) {
+#if !defined(LUA_DISABLE_FLOAT)
       if (lua_isinteger(L, 1))
+#endif
         lua_pushliteral(L, "integer");
+#if !defined(LUA_DISABLE_FLOAT)
       else
         lua_pushliteral(L, "float");
+#endif /* end not LUA_DISABLE_FLOAT */
   }
   else {
     luaL_checkany(L, 1);
@@ -351,6 +367,7 @@ static int math_log10 (lua_State *L) {
 
 static const luaL_Reg mathlib[] = {
   {"abs",   math_abs},
+#if !defined(LUA_DISABLE_FLOAT)
   {"acos",  math_acos},
   {"asin",  math_asin},
   {"atan",  math_atan},
@@ -358,20 +375,29 @@ static const luaL_Reg mathlib[] = {
   {"cos",   math_cos},
   {"deg",   math_deg},
   {"exp",   math_exp},
+#endif /* end not LUA_DISABLE_FLOAT */
   {"tointeger", math_toint},
+#if !defined(LUA_DISABLE_FLOAT)
   {"floor", math_floor},
   {"fmod",   math_fmod},
+#endif /* end not LUA_DISABLE_FLOAT */
   {"ult",   math_ult},
+#if !defined(LUA_DISABLE_FLOAT)
   {"log",   math_log},
+#endif /* end not LUA_DISABLE_FLOAT */
   {"max",   math_max},
   {"min",   math_min},
+#if !defined(LUA_DISABLE_FLOAT)
   {"modf",   math_modf},
   {"rad",   math_rad},
+#endif /* end not LUA_DISABLE_FLOAT */
   {"random",     math_random},
   {"randomseed", math_randomseed},
+#if !defined(LUA_DISABLE_FLOAT)
   {"sin",   math_sin},
   {"sqrt",  math_sqrt},
   {"tan",   math_tan},
+#endif /* end not LUA_DISABLE_FLOAT */
   {"type", math_type},
 #if defined(LUA_COMPAT_MATHLIB)
   {"atan2", math_atan},
@@ -384,8 +410,10 @@ static const luaL_Reg mathlib[] = {
   {"log10", math_log10},
 #endif
   /* placeholders */
+#if !defined(LUA_DISABLE_FLOAT)
   {"pi", NULL},
   {"huge", NULL},
+#endif /* end not LUA_DISABLE_FLOAT */
   {"maxinteger", NULL},
   {"mininteger", NULL},
   {NULL, NULL}
@@ -397,10 +425,12 @@ static const luaL_Reg mathlib[] = {
 */
 LUAMOD_API int luaopen_math (lua_State *L) {
   luaL_newlib(L, mathlib);
+#if !defined(LUA_DISABLE_FLOAT)
   lua_pushnumber(L, PI);
   lua_setfield(L, -2, "pi");
   lua_pushnumber(L, (lua_Number)HUGE_VAL);
   lua_setfield(L, -2, "huge");
+#endif /* end not LUA_DISABLE_FLOAT */
   lua_pushinteger(L, LUA_MAXINTEGER);
   lua_setfield(L, -2, "maxinteger");
   lua_pushinteger(L, LUA_MININTEGER);

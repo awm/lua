@@ -10,7 +10,9 @@
 #include "lprefix.h"
 
 
-#include <math.h>
+#if !defined(LUA_DISABLE_FLOAT)
+# include <math.h>
+#endif
 #include <stdlib.h>
 
 #include "lua.h"
@@ -47,9 +49,11 @@ static int tonumeral(const expdesc *e, TValue *v) {
     case VKINT:
       if (v) setivalue(v, e->u.ival);
       return 1;
+#if !defined(LUA_DISABLE_FLOAT)
     case VKFLT:
       if (v) setfltvalue(v, e->u.nval);
       return 1;
+#endif /* end not LUA_DISABLE_FLOAT */
     default: return 0;
   }
 }
@@ -475,6 +479,7 @@ int luaK_intK (FuncState *fs, lua_Integer n) {
   return addk(fs, &k, &o);
 }
 
+#if !defined(LUA_DISABLE_FLOAT)
 /*
 ** Add a float to list of constants and return its index.
 */
@@ -483,6 +488,7 @@ static int luaK_numberK (FuncState *fs, lua_Number r) {
   setfltvalue(&o, r);
   return addk(fs, &o, &o);  /* use number itself as key */
 }
+#endif /* end not LUA_DISABLE_FLOAT */
 
 
 /*
@@ -607,10 +613,12 @@ static void discharge2reg (FuncState *fs, expdesc *e, int reg) {
       luaK_codek(fs, reg, e->u.info);
       break;
     }
+#if !defined(LUA_DISABLE_FLOAT)
     case VKFLT: {
       luaK_codek(fs, reg, luaK_numberK(fs, e->u.nval));
       break;
     }
+#endif /* end not LUA_DISABLE_FLOAT */
     case VKINT: {
       luaK_codek(fs, reg, luaK_intK(fs, e->u.ival));
       break;
@@ -762,7 +770,9 @@ int luaK_exp2RK (FuncState *fs, expdesc *e) {
     case VFALSE: e->u.info = boolK(fs, 0); goto vk;
     case VNIL: e->u.info = nilK(fs); goto vk;
     case VKINT: e->u.info = luaK_intK(fs, e->u.ival); goto vk;
+#if !defined(LUA_DISABLE_FLOAT)
     case VKFLT: e->u.info = luaK_numberK(fs, e->u.nval); goto vk;
+#endif
     case VK:
      vk:
       e->k = VK;
@@ -863,7 +873,12 @@ void luaK_goiftrue (FuncState *fs, expdesc *e) {
       pc = e->u.info;  /* save jump position */
       break;
     }
-    case VK: case VKFLT: case VKINT: case VTRUE: {
+    case VK:
+#if !defined(LUA_DISABLE_FLOAT)
+    case VKFLT:
+#endif
+    case VKINT:
+    case VTRUE: {
       pc = NO_JUMP;  /* always true; do nothing */
       break;
     }
@@ -914,7 +929,12 @@ static void codenot (FuncState *fs, expdesc *e) {
       e->k = VTRUE;  /* true == not nil == not false */
       break;
     }
-    case VK: case VKFLT: case VKINT: case VTRUE: {
+    case VK:
+#if !defined(LUA_DISABLE_FLOAT)
+    case VKFLT:
+#endif
+    case VKINT:
+    case VTRUE: {
       e->k = VFALSE;  /* false == not "x" == not 0.5 == not 1 == not true */
       break;
     }
@@ -981,9 +1001,12 @@ static int constfolding (FuncState *fs, int op, expdesc *e1,
   if (!tonumeral(e1, &v1) || !tonumeral(e2, &v2) || !validop(op, &v1, &v2))
     return 0;  /* non-numeric operands or not safe to fold */
   luaO_arith(fs->ls->L, op, &v1, &v2, &res);  /* does operation */
+#if !defined(LUA_DISABLE_FLOAT)
   if (ttisinteger(&res)) {
+#endif
     e1->k = VKINT;
     e1->u.ival = ivalue(&res);
+#if !defined(LUA_DISABLE_FLOAT)
   }
   else {  /* folds neither NaN nor 0.0 (to avoid problems with -0.0) */
     lua_Number n = fltvalue(&res);
@@ -992,6 +1015,7 @@ static int constfolding (FuncState *fs, int op, expdesc *e1,
     e1->k = VKFLT;
     e1->u.nval = n;
   }
+#endif /* end not LUA_DISABLE_FLOAT */
   return 1;
 }
 
@@ -1099,7 +1123,10 @@ void luaK_infix (FuncState *fs, BinOpr op, expdesc *v) {
     }
     case OPR_ADD: case OPR_SUB:
     case OPR_MUL: case OPR_DIV: case OPR_IDIV:
-    case OPR_MOD: case OPR_POW:
+    case OPR_MOD:
+#if !defined(LUA_DISABLE_FLOAT)
+    case OPR_POW:
+#endif
     case OPR_BAND: case OPR_BOR: case OPR_BXOR:
     case OPR_SHL: case OPR_SHR: {
       if (!tonumeral(v, NULL))
@@ -1154,7 +1181,10 @@ void luaK_posfix (FuncState *fs, BinOpr op,
       break;
     }
     case OPR_ADD: case OPR_SUB: case OPR_MUL: case OPR_DIV:
-    case OPR_IDIV: case OPR_MOD: case OPR_POW:
+    case OPR_IDIV: case OPR_MOD:
+#if !defined(LUA_DISABLE_FLOAT)
+    case OPR_POW:
+#endif
     case OPR_BAND: case OPR_BOR: case OPR_BXOR:
     case OPR_SHL: case OPR_SHR: {
       if (!constfolding(fs, op + LUA_OPADD, e1, e2))

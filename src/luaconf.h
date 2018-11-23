@@ -45,6 +45,15 @@
 
 
 /*
+@@ LUA_DISABLE_FLOAT Disables all floating point.
+** Define it if you want Lua to avoid the use of any floating point
+** functions (including all <math.h> functions) or operations (on
+** embedded systems, for example).
+*/
+#define LUA_DISABLE_FLOAT
+
+
+/*
 ** By default, Lua on Windows use (some) specific Windows features
 */
 #if !defined(LUA_USE_C89) && defined(_WIN32) && !defined(_WIN32_WCE)
@@ -428,6 +437,16 @@
 @@ lua_str2number converts a decimal numeric string to a number.
 */
 
+#if defined(LUA_DISABLE_FLOAT)
+
+#undef LUA_COMPAT_MATHLIB
+
+#define LUA_NUMBER                  LUA_INTEGER
+#define lua_str2number(s, p)        strtol((s), (p), 0)
+#define l_hashfloat
+#define l_intfitsf
+
+#else /* not LUA_DISABLE_FLOAT */
 
 /* The following definitions are good for most cases here */
 
@@ -504,6 +523,7 @@
 
 #endif					/* } */
 
+#endif /* end not LUA_DISABLE_FLOAT */
 
 
 /*
