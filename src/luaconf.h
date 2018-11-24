@@ -18,6 +18,13 @@
 ** ===================================================================
 */
 
+/*
+@@ LUA_DISABLE_FLOAT disables all floating point.
+** Define it if you want Lua to avoid the use of any floating point
+** functions (including all <math.h> functions) or operations.  This might be
+** useful on embedded systems without an FPU, for example.
+*/
+/* #define LUA_DISABLE_FLOAT */
 
 /*
 ** {====================================================================
@@ -42,15 +49,6 @@
 ** or Windows-specific features on Windows.
 */
 /* #define LUA_USE_C89 */
-
-
-/*
-@@ LUA_DISABLE_FLOAT Disables all floating point.
-** Define it if you want Lua to avoid the use of any floating point
-** functions (including all <math.h> functions) or operations (on
-** embedded systems, for example).
-*/
-/* #define LUA_DISABLE_FLOAT */
 
 
 /*
