@@ -50,7 +50,7 @@
 ** functions (including all <math.h> functions) or operations (on
 ** embedded systems, for example).
 */
-#define LUA_DISABLE_FLOAT
+/* #define LUA_DISABLE_FLOAT */
 
 
 /*
