@@ -16,6 +16,14 @@ numeric operations.  This removes any dependency on the standard C library's
 `<math.h>` as well.  Setting this will also remove the following features, which
 require floating point support:
 
+ * Floating point format specifiers for `string.format` (`A`, `a`, `E`, `e`,
+   `f`, `G`, and `g`).
+ * Floating point format specifiers for `string.pack`, `string.packsize`, and
+   `string.unpack` (`f`, `d`, and `n`).
+ * Floating point literals (e.g `-3.5` or `7e5`).
+ * Floating point output of `collectgarbage("count")`.  Instead of a fractional
+   value in kilobytes this call will return the total number of bytes as an
+   integer.
  * The `^` (power) operator.
  * The zero-parameter form of `math.random`.  The function will always require
    one or two parameters.

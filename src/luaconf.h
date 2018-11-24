@@ -19,7 +19,7 @@
 */
 
 /*
-@@ LUA_DISABLE_FLOAT disables all floating point.
+@@ LUA_DISABLE_FLOAT disables all floating point features.
 ** Define it if you want Lua to avoid the use of any floating point
 ** functions (including all <math.h> functions) or operations.  This might be
 ** useful on embedded systems without an FPU, for example.
