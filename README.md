@@ -1,5 +1,7 @@
 # Lua
 
+[![Build Status](https://travis-ci.org/awm/lua.svg?branch=master)](https://travis-ci.org/awm/lua)
+
 The Lua programming language with some additional compile-time configuration
 options.
 
