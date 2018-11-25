@@ -268,6 +268,8 @@ static int io_open (lua_State *L) {
 
 #endif /* !defined(LUA_DISABLE_FS) */
 
+#if !defined(LUA_DISABLE_EXEC)
+
 /*
 ** function to close 'popen' files
 */
@@ -285,6 +287,8 @@ static int io_popen (lua_State *L) {
   p->closef = &io_pclose;
   return (p->f == NULL) ? luaL_fileresult(L, 0, filename) : 1;
 }
+
+#endif /* end !defined(LUA_DISABLE_EXEC) */
 
 #if !defined(LUA_DISABLE_FS)
 
@@ -724,7 +728,9 @@ static const luaL_Reg iolib[] = {
   {"open", io_open},
 #endif
   {"output", io_output},
+#if !defined(LUA_DISABLE_EXEC)
   {"popen", io_popen},
+#endif
   {"read", io_read},
 #if !defined(LUA_DISABLE_FS)
   {"tmpfile", io_tmpfile},

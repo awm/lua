@@ -83,7 +83,16 @@ following features, which require file system support:
  * `seeall`
 
 **Note:** this option does _not_ remove the ability to load Lua files from
-within C code (for example, using `luaL_loadfile`).
+within C code (for example, using [`luaL_loadfile`][luaL_loadfile]).
+
+## `LUA_DISABLE_EXEC`
+
+Disable subprocess execution in Lua to prevent Lua from invoking other
+executables.  Setting this will remove the following features, which provide
+Lua's subprocess capabilities:
+
+ * [`io.popen`][io.popen]
+ * [`os.execute`][os.execute]
 
 
 [collectgarbage]:       <https://www.lua.org/manual/5.3/manual.html#pdf-collectgarbage>
@@ -92,9 +101,11 @@ within C code (for example, using `luaL_loadfile`).
 [io.lines]:             <https://www.lua.org/manual/5.3/manual.html#pdf-io.lines>
 [io.open]:              <https://www.lua.org/manual/5.3/manual.html#pdf-io.open>
 [io.output]:            <https://www.lua.org/manual/5.3/manual.html#pdf-io.output>
+[io.popen]:             <https://www.lua.org/manual/5.3/manual.html#pdf-io.popen>
 [io.tmpfile]:           <https://www.lua.org/manual/5.3/manual.html#pdf-io.tmpfile>
 [loadfile]:             <https://www.lua.org/manual/5.3/manual.html#pdf-loadfile>
 [luaconf.h]:            <src/luaconf.h>
+[luaL_loadfile]:        <https://www.lua.org/manual/5.3/manual.html#luaL_loadfile>
 [math.acos]:            <https://www.lua.org/manual/5.3/manual.html#pdf-math.acos>
 [math.asin]:            <https://www.lua.org/manual/5.3/manual.html#pdf-math.asin>
 [math.atan]:            <https://www.lua.org/manual/5.3/manual.html#pdf-math.atan>
@@ -113,6 +124,7 @@ within C code (for example, using `luaL_loadfile`).
 [math.sin]:             <https://www.lua.org/manual/5.3/manual.html#pdf-math.sin>
 [math.sqrt]:            <https://www.lua.org/manual/5.3/manual.html#pdf-math.sqrt>
 [math.tan]:             <https://www.lua.org/manual/5.3/manual.html#pdf-math.tan>
+[os.execute]:           <https://www.lua.org/manual/5.3/manual.html#pdf-os.execute>
 [os.remove]:            <https://www.lua.org/manual/5.3/manual.html#pdf-os.remove>
 [os.rename]:            <https://www.lua.org/manual/5.3/manual.html#pdf-os.rename>
 [os.tmpname]:           <https://www.lua.org/manual/5.3/manual.html#pdf-os.tmpname>

@@ -136,7 +136,7 @@ static time_t l_checktime (lua_State *L, int arg) {
 /* }================================================================== */
 
 
-
+#if !defined(LUA_DISABLE_EXEC)
 
 static int os_execute (lua_State *L) {
   const char *cmd = luaL_optstring(L, 1, NULL);
@@ -148,6 +148,8 @@ static int os_execute (lua_State *L) {
     return 1;
   }
 }
+
+#endif /* end !defined(LUA_DISABLE_EXEC) */
 
 #if !defined(LUA_DISABLE_FS)
 
@@ -389,7 +391,9 @@ static const luaL_Reg syslib[] = {
   {"clock",     os_clock},
   {"date",      os_date},
   {"difftime",  os_difftime},
+#if !defined(LUA_DISABLE_EXEC)
   {"execute",   os_execute},
+#endif
   {"exit",      os_exit},
   {"getenv",    os_getenv},
 #if !defined(LUA_DISABLE_FS)

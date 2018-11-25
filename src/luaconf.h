@@ -34,6 +34,12 @@
 /* #define LUA_DISABLE_FS */
 
 /*
+@@ LUA_DISABLE_EXEC disables execution of external programs from within Lua.
+** Define it to prevent Lua from being able to spawn subprocesses.
+*/
+/* #define LUA_DISABLE_EXEC */
+
+/*
 ** {====================================================================
 ** System Configuration: macros to adapt (if needed) Lua to some
 ** particular platform, for instance compiling it with 32-bit numbers or
