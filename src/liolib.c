@@ -21,7 +21,9 @@
 
 #include "lauxlib.h"
 #include "lualib.h"
-
+#if defined(LUA_DISABLE_FS)
+# include "llimits.h"
+#endif
 
 
 
@@ -226,6 +228,7 @@ static int f_gc (lua_State *L) {
   return 0;
 }
 
+#if !defined(LUA_DISABLE_FS)
 
 /*
 ** function to close regular files
@@ -263,6 +266,7 @@ static int io_open (lua_State *L) {
   return (p->f == NULL) ? luaL_fileresult(L, 0, filename) : 1;
 }
 
+#endif /* !defined(LUA_DISABLE_FS) */
 
 /*
 ** function to close 'popen' files
@@ -282,6 +286,7 @@ static int io_popen (lua_State *L) {
   return (p->f == NULL) ? luaL_fileresult(L, 0, filename) : 1;
 }
 
+#if !defined(LUA_DISABLE_FS)
 
 static int io_tmpfile (lua_State *L) {
   LStream *p = newfile(L);
@@ -289,6 +294,7 @@ static int io_tmpfile (lua_State *L) {
   return (p->f == NULL) ? luaL_fileresult(L, 0, NULL) : 1;
 }
 
+#endif /* end !defined(LUA_DISABLE_FS) */
 
 static FILE *getiofile (lua_State *L, const char *findex) {
   LStream *p;
@@ -301,11 +307,17 @@ static FILE *getiofile (lua_State *L, const char *findex) {
 
 
 static int g_iofile (lua_State *L, const char *f, const char *mode) {
+#if defined(LUA_DISABLE_FS)
+  UNUSED(mode);
+#endif
   if (!lua_isnoneornil(L, 1)) {
+#if !defined(LUA_DISABLE_FS)
     const char *filename = lua_tostring(L, 1);
     if (filename)
       opencheck(L, filename, mode);
-    else {
+    else
+#endif /* end !defined(LUA_DISABLE_FS) */
+    {
       tofile(L);  /* check that it's a valid file handle */
       lua_pushvalue(L, 1);
     }
@@ -362,12 +374,14 @@ static int io_lines (lua_State *L) {
     tofile(L);  /* check that it's a valid file handle */
     toclose = 0;  /* do not close it after iteration */
   }
+#if !defined(LUA_DISABLE_FS)
   else {  /* open a new file */
     const char *filename = luaL_checkstring(L, 1);
     opencheck(L, filename, "r");
     lua_replace(L, 1);  /* put file at index 1 */
     toclose = 1;  /* close it after iteration */
   }
+#endif /* end !defined(LUA_DISABLE_FS) */
   aux_lines(L, toclose);
   return 1;
 }
@@ -706,11 +720,15 @@ static const luaL_Reg iolib[] = {
   {"flush", io_flush},
   {"input", io_input},
   {"lines", io_lines},
+#if !defined(LUA_DISABLE_FS)
   {"open", io_open},
+#endif
   {"output", io_output},
   {"popen", io_popen},
   {"read", io_read},
+#if !defined(LUA_DISABLE_FS)
   {"tmpfile", io_tmpfile},
+#endif
   {"type", io_type},
   {"write", io_write},
   {NULL, NULL}

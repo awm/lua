@@ -149,6 +149,7 @@ static int os_execute (lua_State *L) {
   }
 }
 
+#if !defined(LUA_DISABLE_FS)
 
 static int os_remove (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
@@ -173,6 +174,7 @@ static int os_tmpname (lua_State *L) {
   return 1;
 }
 
+#endif /* end !defined(LUA_DISABLE_FS) */
 
 static int os_getenv (lua_State *L) {
   lua_pushstring(L, getenv(luaL_checkstring(L, 1)));  /* if NULL push nil */
@@ -390,11 +392,15 @@ static const luaL_Reg syslib[] = {
   {"execute",   os_execute},
   {"exit",      os_exit},
   {"getenv",    os_getenv},
+#if !defined(LUA_DISABLE_FS)
   {"remove",    os_remove},
   {"rename",    os_rename},
+#endif /* end !defined(LUA_DISABLE_FS) */
   {"setlocale", os_setlocale},
   {"time",      os_time},
+#if !defined(LUA_DISABLE_FS)
   {"tmpname",   os_tmpname},
+#endif
   {NULL, NULL}
 };
 

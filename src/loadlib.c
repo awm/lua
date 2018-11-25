@@ -23,6 +23,7 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#if !defined(LUA_DISABLE_FS)
 
 /*
 ** LUA_IGMARK is a mark to ignore all before it when building the
@@ -455,6 +456,7 @@ static const char *searchpath (lua_State *L, const char *name,
 }
 
 
+#if !defined(LUA_DISABLE_FS)
 static int ll_searchpath (lua_State *L) {
   const char *f = searchpath(L, luaL_checkstring(L, 1),
                                 luaL_checkstring(L, 2),
@@ -467,6 +469,7 @@ static int ll_searchpath (lua_State *L) {
     return 2;  /* return nil + error message */
   }
 }
+#endif /* end !defined(LUA_DISABLE_FS) */
 
 
 static const char *findfile (lua_State *L, const char *name,
@@ -701,11 +704,15 @@ static int ll_seeall (lua_State *L) {
 }
 
 #endif
+
+#endif /* end !defined(LUA_DISABLE_FS) */
+
 /* }====================================================== */
 
 
 
 static const luaL_Reg pk_funcs[] = {
+#if !defined(LUA_DISABLE_FS)
   {"loadlib", ll_loadlib},
   {"searchpath", ll_searchpath},
 #if defined(LUA_COMPAT_MODULE)
@@ -716,10 +723,13 @@ static const luaL_Reg pk_funcs[] = {
   {"cpath", NULL},
   {"path", NULL},
   {"searchers", NULL},
+#endif /* end !defined(LUA_DISABLE_FS) */
   {"loaded", NULL},
   {NULL, NULL}
 };
 
+
+#if !defined(LUA_DISABLE_FS)
 
 static const luaL_Reg ll_funcs[] = {
 #if defined(LUA_COMPAT_MODULE)
@@ -763,10 +773,14 @@ static void createclibstable (lua_State *L) {
   lua_rawsetp(L, LUA_REGISTRYINDEX, &CLIBS);  /* set CLIBS table in registry */
 }
 
+#endif /* end !defined(LUA_DISABLE_FS) */
 
 LUAMOD_API int luaopen_package (lua_State *L) {
+#if !defined(LUA_DISABLE_FS)
   createclibstable(L);
+#endif
   luaL_newlib(L, pk_funcs);  /* create 'package' table */
+#if !defined(LUA_DISABLE_FS)
   createsearcherstable(L);
   /* set paths */
   setpath(L, "path", LUA_PATH_VAR, LUA_PATH_DEFAULT);
@@ -775,9 +789,11 @@ LUAMOD_API int luaopen_package (lua_State *L) {
   lua_pushliteral(L, LUA_DIRSEP "\n" LUA_PATH_SEP "\n" LUA_PATH_MARK "\n"
                      LUA_EXEC_DIR "\n" LUA_IGMARK "\n");
   lua_setfield(L, -2, "config");
+#endif /* end !defined(LUA_DISABLE_FS) */
   /* set field 'loaded' */
   luaL_getsubtable(L, LUA_REGISTRYINDEX, LUA_LOADED_TABLE);
   lua_setfield(L, -2, "loaded");
+#if !defined(LUA_DISABLE_FS)
   /* set field 'preload' */
   luaL_getsubtable(L, LUA_REGISTRYINDEX, LUA_PRELOAD_TABLE);
   lua_setfield(L, -2, "preload");
@@ -785,6 +801,7 @@ LUAMOD_API int luaopen_package (lua_State *L) {
   lua_pushvalue(L, -2);  /* set 'package' as upvalue for next lib */
   luaL_setfuncs(L, ll_funcs, 1);  /* open lib into global table */
   lua_pop(L, 1);  /* pop global table */
+#endif /* end !defined(LUA_DISABLE_FS) */
   return 1;  /* return 'package' table */
 }
 

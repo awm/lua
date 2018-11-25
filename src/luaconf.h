@@ -27,6 +27,13 @@
 /* #define LUA_DISABLE_FLOAT */
 
 /*
+@@ LUA_DISABLE_FS disables all operations which require file system access.
+** Define it if there is no file system for Lua to interact with or if Lua
+** should not have access to it.
+*/
+/* #define LUA_DISABLE_FS */
+
+/*
 ** {====================================================================
 ** System Configuration: macros to adapt (if needed) Lua to some
 ** particular platform, for instance compiling it with 32-bit numbers or
@@ -400,6 +407,11 @@
 
 #endif				/* } */
 
+
+#if defined(LUA_DISABLE_FS)
+#	undef LUA_COMPAT_MODULE
+#	define l_checkmode
+#endif
 
 /*
 @@ LUA_COMPAT_FLOATSTRING makes Lua format integral floats without a
