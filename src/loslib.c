@@ -373,6 +373,7 @@ static int os_setlocale (lua_State *L) {
   return 1;
 }
 
+#if !defined(LUA_DISABLE_EXIT)
 
 static int os_exit (lua_State *L) {
   int status;
@@ -386,6 +387,7 @@ static int os_exit (lua_State *L) {
   return 0;
 }
 
+#endif /* end !defined(LUA_DISABLE_EXIT) */
 
 static const luaL_Reg syslib[] = {
   {"clock",     os_clock},
@@ -394,7 +396,9 @@ static const luaL_Reg syslib[] = {
 #if !defined(LUA_DISABLE_EXEC)
   {"execute",   os_execute},
 #endif
+#if !defined(LUA_DISABLE_EXIT)
   {"exit",      os_exit},
+#endif
   {"getenv",    os_getenv},
 #if !defined(LUA_DISABLE_FS)
   {"remove",    os_remove},

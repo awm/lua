@@ -40,6 +40,13 @@
 /* #define LUA_DISABLE_EXEC */
 
 /*
+@@ LUA_DISABLE_EXIT disables the ability for Lua to intentionally exit.
+** Define it to remove the ability of Lua to intentionally exit the current
+** process.
+*/
+/* #define LUA_DISABLE_EXIT */
+
+/*
 ** {====================================================================
 ** System Configuration: macros to adapt (if needed) Lua to some
 ** particular platform, for instance compiling it with 32-bit numbers or

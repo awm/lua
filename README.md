@@ -94,6 +94,15 @@ Lua's subprocess capabilities:
  * [`io.popen`][io.popen]
  * [`os.execute`][os.execute]
 
+## `LUA_DISABLE_EXIT`
+
+Disable ability for Lua scripts to explicitly terminate their own process.  This
+does not prevent other behaviours such as unhandled errors or failed assertions
+from doing so, however.  Setting this will remove the following feature, which
+provides Lua's exit capability:
+
+ * [`os.exit`][os.exit]
+
 
 [collectgarbage]:       <https://www.lua.org/manual/5.3/manual.html#pdf-collectgarbage>
 [dofile]:               <https://www.lua.org/manual/5.3/manual.html#pdf-dofile>
@@ -125,6 +134,7 @@ Lua's subprocess capabilities:
 [math.sqrt]:            <https://www.lua.org/manual/5.3/manual.html#pdf-math.sqrt>
 [math.tan]:             <https://www.lua.org/manual/5.3/manual.html#pdf-math.tan>
 [os.execute]:           <https://www.lua.org/manual/5.3/manual.html#pdf-os.execute>
+[os.exit]:              <https://www.lua.org/manual/5.3/manual.html#pdf-os.exit>
 [os.remove]:            <https://www.lua.org/manual/5.3/manual.html#pdf-os.remove>
 [os.rename]:            <https://www.lua.org/manual/5.3/manual.html#pdf-os.rename>
 [os.tmpname]:           <https://www.lua.org/manual/5.3/manual.html#pdf-os.tmpname>
