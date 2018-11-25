@@ -146,9 +146,9 @@ typedef struct lua_TValue {
 #define ttisnumber(o)		checktype((o), LUA_TNUMBER)
 #if defined(LUA_DISABLE_FLOAT)
 #define ttisfloat(o)    ((void)(o), 0)
-#else /* not LUA_DISABLE_FLOAT */
+#else /* !defined(LUA_DISABLE_FLOAT) */
 #define ttisfloat(o)		checktag((o), LUA_TNUMFLT)
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
 #define ttisinteger(o)		checktag((o), LUA_TNUMINT)
 #define ttisnil(o)		checktag((o), LUA_TNIL)
 #define ttisboolean(o)		checktag((o), LUA_TBOOLEAN)
@@ -171,9 +171,9 @@ typedef struct lua_TValue {
 #define ivalue(o)	check_exp(ttisinteger(o), val_(o).i)
 #if defined(LUA_DISABLE_FLOAT)
 #define fltvalue(o) ((void)(o), 0)
-#else /* not LUA_DISABLE_FLOAT */
+#else /* !defined(LUA_DISABLE_FLOAT) */
 #define fltvalue(o) check_exp(ttisfloat(o), val_(o).n)
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
 #define nvalue(o)	check_exp(ttisnumber(o), \
 	(ttisinteger(o) ? cast_num(ivalue(o)) : fltvalue(o)))
 #define gcvalue(o)	check_exp(iscollectable(o), val_(o).gc)

@@ -458,14 +458,14 @@ LUA_API void lua_pushnil (lua_State *L) {
 LUA_API void lua_pushnumber (lua_State *L, lua_Number n) {
   lua_pushinteger(L, n);
 }
-#else /* not LUA_DISABLE_FLOAT */
+#else /* !defined(LUA_DISABLE_FLOAT) */
 LUA_API void lua_pushnumber (lua_State *L, lua_Number n) {
   lua_lock(L);
   setfltvalue(L->top, n);
   api_incr_top(L);
   lua_unlock(L);
 }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
 
 
 LUA_API void lua_pushinteger (lua_State *L, lua_Integer n) {

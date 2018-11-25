@@ -123,7 +123,7 @@ static lua_Number numarith (lua_State *L, int op, lua_Number v1,
     default: lua_assert(0); return 0;
   }
 }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
 
 
 void luaO_arith (lua_State *L, int op, const TValue *p1, const TValue *p2,
@@ -148,7 +148,7 @@ void luaO_arith (lua_State *L, int op, const TValue *p1, const TValue *p2,
       }
       else break;  /* go to the end */
     }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
     default: {  /* other operations */
 #if !defined(LUA_DISABLE_FLOAT)
       lua_Number n1; lua_Number n2;
@@ -162,7 +162,7 @@ void luaO_arith (lua_State *L, int op, const TValue *p1, const TValue *p2,
         setfltvalue(res, numarith(L, op, n1, n2));
         return;
       }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
       else break;  /* go to the end */
     }
   }
@@ -304,7 +304,7 @@ static const char *l_str2d (const char *s, lua_Number *result) {
   }
   return endptr;
 }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
 
 
 #define MAXBY10		cast(lua_Unsigned, LUA_MAXINTEGER / 10)
@@ -355,7 +355,7 @@ size_t luaO_str2num (const char *s, TValue *o) {
   else if ((e = l_str2d(s, &n)) != NULL) {  /* else try as a float */
     setfltvalue(o, n);
   }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
   else
     return 0;  /* conversion failed */
   return (e - s) + 1;  /* success; return string size */
@@ -394,7 +394,7 @@ void luaO_tostring (lua_State *L, StkId obj) {
 #if defined(LUA_DISABLE_FLOAT)
   lua_assert(ttisinteger(obj));
   len = lua_integer2str(buff, sizeof(buff), ivalue(obj));
-#else /* not LUA_DISABLE_FLOAT */
+#else /* !defined(LUA_DISABLE_FLOAT) */
   if (ttisinteger(obj))
     len = lua_integer2str(buff, sizeof(buff), ivalue(obj));
   else {
@@ -406,7 +406,7 @@ void luaO_tostring (lua_State *L, StkId obj) {
     }
 #endif
   }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
   setsvalue2s(L, obj, luaS_newlstr(L, buff, len));
 }
 
@@ -453,7 +453,7 @@ const char *luaO_pushvfstring (lua_State *L, const char *fmt, va_list argp) {
       }
       case 'f': {  /* a 'lua_Number' */
         setfltvalue(L->top, cast_num(va_arg(argp, l_uacNumber)));
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
       top2str:  /* convert the top element to a string */
         luaD_inctop(L);
         luaO_tostring(L, L->top - 1);

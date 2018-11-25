@@ -456,7 +456,7 @@
 #define l_hashfloat
 #define l_intfitsf
 
-#else /* not LUA_DISABLE_FLOAT */
+#else /* !defined(LUA_DISABLE_FLOAT) */
 
 /* The following definitions are good for most cases here */
 
@@ -533,7 +533,7 @@
 
 #endif					/* } */
 
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
 
 
 /*

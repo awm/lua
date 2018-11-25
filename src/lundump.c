@@ -136,7 +136,7 @@ static void LoadConstants (LoadState *S, Proto *f) {
     case LUA_TNUMFLT:
       setfltvalue(o, LoadNumber(S));
       break;
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
     case LUA_TNUMINT:
       setivalue(o, LoadInteger(S));
       break;

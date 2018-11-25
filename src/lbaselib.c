@@ -185,9 +185,9 @@ static int luaB_collectgarbage (lua_State *L) {
       int b = lua_gc(L, LUA_GCCOUNTB, 0);
 #if defined(LUA_DISABLE_FLOAT)
       lua_pushinteger(L, res * 1024 + b);
-#else
+#else /* !defined(LUA_DISABLE_FLOAT) */
       lua_pushnumber(L, (lua_Number)res + ((lua_Number)b/1024));
-#endif
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
       return 1;
     }
     case LUA_GCSTEP: case LUA_GCISRUNNING: {

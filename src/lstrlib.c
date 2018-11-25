@@ -895,9 +895,9 @@ static int lua_number2strx (lua_State *L, char *buff, int sz,
 */
 #if defined(LUA_DISABLE_FLOAT)
 #define MAX_ITEM        (128)
-#else /* not LUA_DISABLE_FLOAT */
+#else /* !defined(LUA_DISABLE_FLOAT) */
 #define MAX_ITEM        (120 + l_mathlim(MAX_10_EXP))
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
 
 
 /* valid flags in a format specification */
@@ -942,7 +942,7 @@ static void checkdp (char *buff, int nb) {
     if (ppoint) *ppoint = '.';  /* change it to a dot */
   }
 }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
 
 static void addliteral (lua_State *L, luaL_Buffer *b, int arg) {
   switch (lua_type(L, arg)) {
@@ -962,7 +962,7 @@ static void addliteral (lua_State *L, luaL_Buffer *b, int arg) {
         checkdp(buff, nb);  /* ensure it uses a dot */
       }
       else
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
       {  /* integers */
         lua_Integer n = lua_tointeger(L, arg);
         const char *format = (n == LUA_MININTEGER)  /* corner case? */
@@ -1065,7 +1065,7 @@ static int str_format (lua_State *L) {
           nb = l_sprintf(buff, MAX_ITEM, form, (LUAI_UACNUMBER)n);
           break;
         }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
         case 'q': {
           addliteral(L, &b, arg);
           break;
@@ -1246,7 +1246,7 @@ static KOption getoption (Header *h, const char **fmt, int *size) {
     case 'f': *size = sizeof(float); return Kfloat;
     case 'd': *size = sizeof(double); return Kfloat;
     case 'n': *size = sizeof(lua_Number); return Kfloat;
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
     case 'i': *size = getnumlimit(h, fmt, sizeof(int)); return Kint;
     case 'I': *size = getnumlimit(h, fmt, sizeof(int)); return Kuint;
     case 's': *size = getnumlimit(h, fmt, sizeof(size_t)); return Kstring;
@@ -1389,7 +1389,7 @@ static int str_pack (lua_State *L) {
         luaL_addsize(&b, size);
         break;
       }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
       case Kchar: {  /* fixed-size string */
         size_t len;
         const char *s = luaL_checklstring(L, arg, &len);
@@ -1527,7 +1527,7 @@ static int str_unpack (lua_State *L) {
         lua_pushnumber(L, num);
         break;
       }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
       case Kchar: {
         lua_pushlstring(L, data + pos, size);
         break;

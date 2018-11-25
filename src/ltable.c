@@ -123,7 +123,7 @@ static Node *mainposition (const Table *t, const TValue *key) {
 #if !defined(LUA_DISABLE_FLOAT)
     case LUA_TNUMFLT:
       return hashmod(t, l_hashfloat(fltvalue(key)));
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
     case LUA_TSHRSTR:
       return hashstr(t, tsvalue(key));
     case LUA_TLNGSTR:
@@ -602,7 +602,7 @@ const TValue *luaH_get (Table *t, const TValue *key) {
         return luaH_getint(t, k);  /* use specialized version */
       /* else... */
     }  /* FALLTHROUGH */
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
     default:
       return getgeneric(t, key);
   }

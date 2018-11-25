@@ -938,7 +938,7 @@ static void simpleexp (LexState *ls, expdesc *v) {
       v->u.nval = ls->t.seminfo.r;
       break;
     }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
     case TK_INT: {
       init_exp(v, VKINT, 0);
       v->u.ival = ls->t.seminfo.i;

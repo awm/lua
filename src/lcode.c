@@ -53,7 +53,7 @@ static int tonumeral(const expdesc *e, TValue *v) {
     case VKFLT:
       if (v) setfltvalue(v, e->u.nval);
       return 1;
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
     default: return 0;
   }
 }
@@ -488,7 +488,7 @@ static int luaK_numberK (FuncState *fs, lua_Number r) {
   setfltvalue(&o, r);
   return addk(fs, &o, &o);  /* use number itself as key */
 }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
 
 
 /*
@@ -618,7 +618,7 @@ static void discharge2reg (FuncState *fs, expdesc *e, int reg) {
       luaK_codek(fs, reg, luaK_numberK(fs, e->u.nval));
       break;
     }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
     case VKINT: {
       luaK_codek(fs, reg, luaK_intK(fs, e->u.ival));
       break;
@@ -1015,7 +1015,7 @@ static int constfolding (FuncState *fs, int op, expdesc *e1,
     e1->k = VKFLT;
     e1->u.nval = n;
   }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
   return 1;
 }
 

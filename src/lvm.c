@@ -100,7 +100,7 @@ int luaV_tointeger (const TValue *obj, lua_Integer *p, int mode) {
  again:
 #if defined(LUA_DISABLE_FLOAT)
   UNUSED(mode);
-#else /* not LUA_DISABLE_FLOAT */
+#else /* !defined(LUA_DISABLE_FLOAT) */
   if (ttisfloat(obj)) {
     lua_Number n = fltvalue(obj);
     lua_Number f = l_floor(n);
@@ -112,7 +112,7 @@ int luaV_tointeger (const TValue *obj, lua_Integer *p, int mode) {
     return lua_numbertointeger(f, p);
   }
   else
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
   if (ttisinteger(obj)) {
     *p = ivalue(obj);
     return 1;
@@ -911,7 +911,7 @@ void luaV_execute (lua_State *L) {
         else if (tonumber(rb, &nb) && tonumber(rc, &nc)) {
           setfltvalue(ra, luai_numadd(L, nb, nc));
         }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
         else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_ADD)); }
         vmbreak;
       }
@@ -929,7 +929,7 @@ void luaV_execute (lua_State *L) {
         else if (tonumber(rb, &nb) && tonumber(rc, &nc)) {
           setfltvalue(ra, luai_numsub(L, nb, nc));
         }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
         else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_SUB)); }
         vmbreak;
       }
@@ -938,7 +938,7 @@ void luaV_execute (lua_State *L) {
         TValue *rc = RKC(i);
 #if !defined(LUA_DISABLE_FLOAT)
         lua_Number nb; lua_Number nc;
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
         if (ttisinteger(rb) && ttisinteger(rc)) {
           lua_Integer ib = ivalue(rb); lua_Integer ic = ivalue(rc);
           setivalue(ra, intop(*, ib, ic));
@@ -947,7 +947,7 @@ void luaV_execute (lua_State *L) {
         else if (tonumber(rb, &nb) && tonumber(rc, &nc)) {
           setfltvalue(ra, luai_nummul(L, nb, nc));
         }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
         else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_MUL)); }
         vmbreak;
       }
@@ -962,7 +962,7 @@ void luaV_execute (lua_State *L) {
         else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_DIV)); }
         vmbreak;
       }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
       vmcase(OP_BAND) {
         TValue *rb = RKB(i);
         TValue *rc = RKC(i);
@@ -1029,7 +1029,7 @@ void luaV_execute (lua_State *L) {
           luai_nummod(L, nb, nc, m);
           setfltvalue(ra, m);
         }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
         else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_MOD)); }
         vmbreak;
       }
@@ -1050,7 +1050,7 @@ void luaV_execute (lua_State *L) {
         else if (tonumber(rb, &nb) && tonumber(rc, &nc)) {
           setfltvalue(ra, luai_numidiv(L, nb, nc));
         }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
         else { Protect(luaT_trybinTM(L, rb, rc, ra, TM_IDIV)); }
         vmbreak;
       }
@@ -1063,7 +1063,7 @@ void luaV_execute (lua_State *L) {
           setfltvalue(ra, luai_numpow(L, nb, nc));
         }
         else
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
         {
           Protect(luaT_trybinTM(L, rb, rc, ra, TM_POW));
         }
@@ -1082,7 +1082,7 @@ void luaV_execute (lua_State *L) {
         else if (tonumber(rb, &nb)) {
           setfltvalue(ra, luai_numunm(L, nb));
         }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
         else {
           Protect(luaT_trybinTM(L, rb, rb, ra, TM_UNM));
         }
@@ -1255,7 +1255,7 @@ void luaV_execute (lua_State *L) {
             setfltvalue(ra + 3, idx);  /* ...and external index */
           }
         }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
         vmbreak;
       }
       vmcase(OP_FORPREP) {
@@ -1284,7 +1284,7 @@ void luaV_execute (lua_State *L) {
             luaG_runerror(L, "'for' initial value must be a number");
           setfltvalue(init, luai_numsub(L, ninit, nstep));
         }
-#endif /* end not LUA_DISABLE_FLOAT */
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
         ci->u.l.savedpc += GETARG_sBx(i);
         vmbreak;
       }
