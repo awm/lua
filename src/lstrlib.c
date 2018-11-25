@@ -1321,6 +1321,7 @@ static void packint (luaL_Buffer *b, lua_Unsigned n,
   luaL_addsize(b, size);  /* add result to buffer */
 }
 
+#if !defined(LUA_DISABLE_FLOAT)
 
 /*
 ** Copy 'size' bytes from 'src' to 'dest', correcting endianness if
@@ -1339,6 +1340,7 @@ static void copywithendian (volatile char *dest, volatile const char *src,
   }
 }
 
+#endif /* end !defined(LUA_DISABLE_FLOAT) */
 
 static int str_pack (lua_State *L) {
   luaL_Buffer b;
